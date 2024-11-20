@@ -86,6 +86,7 @@ All structured in 3D format, having .x, .y, .z attributes
 - Warp scheduler makes the warps run
 - 4 warp schedulers per SM (Streaming Multiprocessor)
 
+Total number of warps in a block can be calculated like this:
 $ceil(\frac{T}{W_{size}})$, where $T$ is #threads/block, $W_{size}$ is warp size =32
 
 ## Blocks
