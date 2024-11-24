@@ -40,6 +40,7 @@ int blockDim = 32; // 32 threads per block
 ## Thread Synchronization
 
 - `cudaDeviceSynchronize();` --> makes sure all the kernel for one problem are caught up for safe continuation. It's a barrier. Called `int main() {}` or another non-`__global__` function.
+
 ![](../assets/barrier.png)
 
 - `__syncthreads();` to put a barrier for thread execution **inside** the kernel. Useful if accessing the same memory spots and needs all the other jobs to catch up before start making edits to a certain place. Example: one worker might be halfway done doing stuff to a place in memory. Another worker might already be done the job task that the first worker is still doing. If this faster worker messes with a piece of memory that the slower worker still needs, it leads to numerical instability and errors.
@@ -49,6 +50,7 @@ int blockDim = 32; // 32 threads per block
 - *What is the need to synchronize threads?* Threads are asynchronous and can be executed in any order. Given a thread that is dependent on another thread, need to make sure that the thread that is dependent on the other thread is not executed before the other thread is done.
   - For example, if vector add the two arrays `a = [1, 2, 3, 4]`, `b = [5, 6, 7, 8]` and store the result in `c`, then add 1 to each element in `c`, need to ensure all the multiply operations catch up before moving onto adding (following PEDMAS). If no clear threads sync, there is a possibility that one gets an incorrect output vector where a 1 is added before a multiply.
   - A more clear but less common example would parallelized bit shift. If there is a bit shift operation that is dependent on the previous bit shift operation, one needs to make sure that the previous bit shift operation is done before we move onto the next one
+  
   ![](../assets/bitshift.png)
 
 
