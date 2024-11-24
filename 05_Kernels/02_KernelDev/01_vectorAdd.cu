@@ -6,8 +6,18 @@
 #define LEN 1000000
 #define BLOCK_SIZE 256  // how many threads are in the block
 
-// Add vectors A and B
+double getTime() {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        return ts.tv_sec + ts.tv_nsec * 1e-9;
+}
 
+void initVector(float *a, int n) {
+        for (int i = 0; i < n; i++) a[i] = (float)rand() / RAND_MAX;
+}
+
+
+// Add vectors A and B
 void addVectorsCpu(float *a, float *b, float *c, int n) {
 	for (int i = 0; i < n; i++)
 		c[i] = a[i] + b[i];
@@ -17,16 +27,6 @@ __global__ void addVectorsGpu(float *a, float *b, float *c, int n) {
 	int thrIdx = blockIdx.x * blockDim.x + threadIdx.x; // get "global" index of thread
 	if (thrIdx < n)
 		c[thrIdx] = a[thrIdx] + b[thrIdx];
-}
-
-void initVector(float *a, int n) {
-	for (int i = 0; i < n; i++) a[i] = (float)rand() / RAND_MAX;
-}
-
-double getTime() {
-	struct timespec ts;
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	return ts.tv_sec + ts.tv_nsec * 1e-9;
 }
 
 int main() {
@@ -57,11 +57,12 @@ int main() {
 	cudaMemcpy(dA, hA, size, cudaMemcpyHostToDevice);
 	cudaMemcpy(dB, hB, size, cudaMemcpyHostToDevice);
 
-	// get grid and block dims
+
+	// define grid and block dims
 	int numBlocks = (LEN + BLOCK_SIZE - 1) / BLOCK_SIZE; // integer division and round-up for proper mem allocation
 
 	printf("warm-up runs...\n");
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 3; i++) {
 		addVectorsCpu(hA, hB, hC_cpu, LEN);
 		addVectorsGpu<<<numBlocks, BLOCK_SIZE>>>(dA, dB, dC, LEN);
 		cudaDeviceSynchronize();
@@ -76,10 +77,10 @@ int main() {
 	}
 	cpuTime /= 20; // average
 
-
 	printf("benchmark GPU...\n");
 	gpuTime = 0.0;
 	for (int i = 0; i < 20; i++) {
+		cudaMemset(dC, 0, size);
 		startTime = getTime();
 		addVectorsGpu<<<numBlocks, BLOCK_SIZE>>>(dA, dB, dC, LEN);
 		cudaDeviceSynchronize();
