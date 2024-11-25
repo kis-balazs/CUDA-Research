@@ -46,17 +46,6 @@ nsys profile --stats=true ./02
 - `ncu --kernel-name matrixMulKernelOptimized --launch-skip 0 --launch-count 1 --section Occupancy "./nvtx_matmul"`
 - turns out nvidia profiling tools won't give everything needed to optimize deep learning kernels: [Here](https://stackoverflow.com/questions/2204527/how-do-you-profile-optimize-cuda-kernels)
 
-## Profiling Vector Addition
-- when profiling the following 3 variants with a 32 (2^25) million element vector addition
-    - basic without blocks OR threads
-    - ![](../assets/prof1.png)
-    - w/ threads
-    - ![](../assets/prof2.png)
-    - w/ threads and blocks
-    - ![](../assets/prof3.png)
-- originally from: https://developer.nvidia.com/blog/even-easier-introduction-cuda/
-
-
 ## NVTX `nvtx` profiling
 ```bash
 # Compile the code
