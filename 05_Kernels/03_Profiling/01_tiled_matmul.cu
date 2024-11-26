@@ -34,13 +34,13 @@ __global__ void mulMatsOptimized(float *A, float *B, float *C, int n, int m, int
 
 		__syncthreads();
 		
-		for (int _k = 0; _k < TILE_SIZE; _k++)
-			sum += sharedA[thrY][_k] * sharedB[_k][thrX];
+		for (int _m = 0; _m < TILE_SIZE; _m++)
+			sum += sharedA[thrY][_m] * sharedB[_m][thrX];
 
 		__syncthreads();
 	}
 
-	if (row < n && col < m)
+	if (row < n && col < k)
 		C[row * m + col] = sum;
 }
 
