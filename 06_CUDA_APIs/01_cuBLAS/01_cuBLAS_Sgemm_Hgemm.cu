@@ -96,11 +96,11 @@ int main() {
 	printf("Sgemm results are %s\n", cublasSgemmCorrect ? "correct" : "incorrect");
 
 	for (int i = 0; i < N * K; i++) {
-                if (fabs(CCpu[i] - CCublasH[i]) > 1e-4) {
-                        cublasHgemmCorrect = false;
-                        break;
-                }
-        }
+		if (fabs(CCpu[i] - CCublasH[i]) > 1e-4) {
+			cublasHgemmCorrect = false;
+			break;
+		}
+	}
 	printf("Hgemm results are %s\n", cublasHgemmCorrect ? "correct" : "incorrect");
 
 	cudaFree(dA); cudaFree(dB); cudaFree(dC); cudaFree(dAh); cudaFree(dBh); cudaFree(dCh);
