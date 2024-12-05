@@ -101,7 +101,7 @@ int main() {
                         break;
                 }
         }
-        printf("Hgemm results are %s\n", cublasHgemmCorrect ? "correct" : "incorrect");
+	printf("Hgemm results are %s\n", cublasHgemmCorrect ? "correct" : "incorrect");
 
 	cudaFree(dA); cudaFree(dB); cudaFree(dC); cudaFree(dAh); cudaFree(dBh); cudaFree(dCh);
 	CHECK_CUBLAS(cublasDestroy(handle));
