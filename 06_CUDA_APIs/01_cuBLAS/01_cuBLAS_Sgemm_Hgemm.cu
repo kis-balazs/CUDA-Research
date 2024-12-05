@@ -36,8 +36,8 @@ void mulMatsCpu(float *A, float *B, float *C, int n, int m, int k) {
 }
 
 int main() {
-	float A[N * M] = {0.0f};
-	float B[M * K] = {0.0f};
+	float A[N * M] = {1.0f};
+	float B[M * K] = {2.0f};
 	float CCpu[N * K], CCublasS[N * K], CCublasH[N * K];
 
 	size_t sizeA = N * M * sizeof(float);
