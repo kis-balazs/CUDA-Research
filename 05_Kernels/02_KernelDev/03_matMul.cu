@@ -20,7 +20,7 @@ void initMat(float *MAT, int r, int c) {
     for (int i = 0; i < r * c; i++) MAT[i] = (float)rand() / RAND_MAX;
 }
 
-// Multiply vectors A and B
+// Multiply matrices A and B
 // A(2x3) @ B(3x4) = C(2x4) --> (N x M) @ (M x K) = (N x K)
 
 void mulMatsCpu(float *A, float *B, float *C, int n, int m, int k) {

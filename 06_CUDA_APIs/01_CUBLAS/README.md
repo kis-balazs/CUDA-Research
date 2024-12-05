@@ -2,9 +2,11 @@
 
 # cuBLAS
 
-- NVIDIA CUDA Basic Linear Algebra Subprograms is a GPU-accelerated library for accelerating AI and HPC (high performance compute) applications. It includes several API extensions for providing drop-in industry standard BLAS APIs and GEMM (general matrix multiplication) APIs with support for fusions that are highly optimized for NVIDIA GPUs.
+- NVIDIA **CUDA Basic Linear Algebra Subprograms** is a GPU-accelerated library for accelerating AI and HPC (high performance compute) applications. It includes several API extensions for providing drop-in industry standard BLAS APIs and GEMM (general matrix multiplication) APIs with support for fusions that are highly optimized for NVIDIA GPUs.
 <br>
 - Super relevant: shaping (https://stackoverflow.com/questions/56043539/cublassgemm-row-major-multiplication)
+
+Important! Compile with `nvcc -o exec code.cu -lcublas`
 
 ## cuBLAS-Lt
 - **cuBLASLt (cuda BLAS Lightweight)** is an extension of the cuBLAS library that provides a more flexible API, primarily aimed at improving performance for specific workloads like deep learning models. Close to all the datatypes and API calls are tied back to matmul.
