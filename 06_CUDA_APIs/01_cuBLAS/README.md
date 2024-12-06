@@ -15,7 +15,7 @@ Important! Compile with `nvcc -o exec code.cu -lcublas`
 - Funfact, [cublas-lt docs](https://docs.nvidia.com/cuda/cublas/#cublasltmatmul) state that the leading dimensions of matrices (for multiplication) need to be multiples of 4.
 
 
-Important! Compile with `nvcc -o exec code.cu -lcublasLt` 
+Important! Compile with `nvcc -o exec code.cu -lcublasLt`; Note: `-lcublas` link might be needed by hybrid implementations. 
 
 ## cuBLAS-Xt
 - cublas-xt for host + gpu solving (way slower)
