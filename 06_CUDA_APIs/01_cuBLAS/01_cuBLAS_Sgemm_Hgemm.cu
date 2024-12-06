@@ -44,6 +44,10 @@ int main() {
 	size_t sizeB = M * K * sizeof(float);
 	size_t sizeC = N * K * sizeof(float);
 
+	size_t sizeAh = N * M * sizeof(half);
+	size_t sizeBh = M * K * sizeof(half);
+	size_t sizeCh = N * K * sizeof(half);
+
 	mulMatsCpu(A, B, CCpu, N, M, K);
 
 	cublasHandle_t handle;
@@ -67,22 +71,22 @@ int main() {
 
 	// cuBLAS Hgemm --> Half Precision General Matrix Multiplication
 	half *dAh, *dBh, *dCh;
-	CHECK_CUDA(cudaMalloc(&dAh, sizeA));
-	cudaMalloc(&dBh, sizeB);
-	cudaMalloc(&dCh, sizeC);
+	CHECK_CUDA(cudaMalloc(&dAh, sizeAh));
+	cudaMalloc(&dBh, sizeBh);
+	cudaMalloc(&dCh, sizeCh);
 
 	half Ah[N * M], Bh[M * K];
 	for (int i = 0; i < N * M; i++) Ah[i] = __float2half(A[i]);
 	for (int i = 0; i < M * K; i++) Bh[i] = __float2half(B[i]);
 
-	CHECK_CUDA(cudaMemcpy(dAh, Ah, sizeA, cudaMemcpyHostToDevice));
-	cudaMemcpy(dBh, Bh, sizeB, cudaMemcpyHostToDevice);
+	CHECK_CUDA(cudaMemcpy(dAh, Ah, sizeAh, cudaMemcpyHostToDevice));
+	cudaMemcpy(dBh, Bh, sizeBh, cudaMemcpyHostToDevice);
 
 	__half alphah = __float2half(1.0f), betah = __float2half(0.0f);
 	CHECK_CUBLAS(cublasHgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, K, N, M, &alphah, dBh, K, dAh, M, &betah, dCh, K));
 
 	half Ch[N * K];
-	cudaMemcpy(Ch, dCh, sizeC, cudaMemcpyDeviceToHost);
+	cudaMemcpy(Ch, dCh, sizeCh, cudaMemcpyDeviceToHost);
 	for (int i = 0; i < N * K; i++) CCublasH[i] = __half2float(Ch[i]);
 
 
