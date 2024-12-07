@@ -1,4 +1,4 @@
-> Note: Before beginning, its important to note that doing warmup and benchmark runs is a good way to get a more accurate measurement of the time it takes to execute a function. Without doing any warmup runs, cuBLAS will have a lot of overhead from the first run and it will skew the results (~45ms). Benchmark runs are used to get a more accurate average time.
+> Note: Its important to note that doing warmup and benchmark runs is a good way to get a more accurate measurement of the time it takes to execute a function. Without doing any warmup runs, cuBLAS will have a lot of overhead from the first run and it will skew the results (~45ms). Benchmark runs are used to get a more accurate average time.
 
 # cuBLAS
 
