@@ -141,6 +141,12 @@ int main() {
 	cublasLtMatmulDesc_t mmDesc;
 	cublasLtMatmulDescCreate(&mmDesc, CUBLAS_COMPUTE_32F, CUDA_R_32F);
 
+	// set matrix operation for A and B
+	cublasOperation_t transA = CUBLAS_OP_N;
+	cublasOperation_t transB = CUBLAS_OP_N;
+	cublasLtMatmulDescSetAttribute(mmDesc, CUBLASLT_MATMUL_DESC_TRANSA, &transA, sizeof(cublasOperation_t));
+	cublasLtMatmulDescSetAttribute(mmDesc, CUBLASLT_MATMUL_DESC_TRANSB, &transB, sizeof(cublasOperation_t));
+
 	float cuBLASLtFp32Time = benchmarkKernel([&]() {
 		cublasLtMatmul(handleLt, mmDesc, &alpha, dB, lB, dA, lA, &beta, dC, lC, dC, lC, NULL, NULL, 0, 0);
 	}, runsWarmup, runsBenchmark);
