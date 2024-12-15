@@ -62,5 +62,50 @@ __global__ void mulMatsGpu(float *A, float *B, float *C, int n, int m, int k) {
 
 
 int main() {
+	float A[N * M];
+	float B[M * K];
+
+	initMat(A, N, M);
+	initMat(B, M, K);
+
+	float CcuBLASFp32[N * K], CcuBLASFp16[N * K];
+	float CcuBLASLtFp32[N * K], CcuBLASLtFp16[N * K];
+
+	size_t sizeA = N * M * sizeof(float);
+	size_t sizeB = M * K * sizeof(float);
+	size_t sizeC = N * K * sizeof(float);
+	
+	size_t sizeAh = N * M * sizeof(half);
+	size_t sizeBh = M * K * sizeof(half);
+	size_t sizeCh = N * K * sizeof(half);
+
+	float *dA, *dB, *dC;
+	cudaMalloc(&dA, sizeA);
+	cudaMalloc(&dB, sizeB);
+	cudaMalloc(&dC, sizeC);
+
+	half *dAh, *dBh, *dCh;
+	cudaMalloc(&dAh, sizeAh);
+	cudaMalloc(&dBh, sizeBh);
+	cudaMalloc(&dCh, sizeCh);
+
+	cudaMemcpy(dA, A, sizeA, cudaMemcpyHostToDevice);
+	cudaMemcpy(dB, B, sizeB, cudaMemcpyHostToDevice);
+
+	half Ah[N * M], Bh[M * K];
+	for (int i = 0; i < N * M; i++) Ah[i] = __float2half(A[i]);
+	for (int i = 0; i < M * K; i++) Bh[i] = __float2half(B[i]);
+
+	cudaMemcpy(dAh, Ah, sizeAh, cudaMemcpyHostToDevice);
+	cudaMemcpy(dBh, Bh, sizeBh, cudaMemcpyHostToDevice);
+
+	cublasHandle_t handle;
+	cublasCreate(&handle);
+
+	cublasLtHandle_t handleLt;
+	cublasLtCreate(&handleLt);
+
+
+
 	return 0;
 }
