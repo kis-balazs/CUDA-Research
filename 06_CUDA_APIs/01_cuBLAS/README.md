@@ -33,6 +33,8 @@ Choose XT for large-scale linear algebra that exceeds GPU memory
     - `(M, N) @ (N, K)` where M = N = K = 16384
     - ![](../assets/cublas-vs-cublasxt.png)
 
+Important! Compile with `nvcc -o exec code.cu -lcublas`; Note: `-lcublas` link enough for cuBLASXt. 
+
 ## cuBLASDx
 
 The cuBLASDx library (preview) is a device side API extension for performing BLAS calculations inside CUDA kernels. By fusing numerical operations latency decrease can be achieved, thus further improving application performance.
