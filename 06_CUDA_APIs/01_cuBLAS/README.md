@@ -30,7 +30,7 @@ Ideal for large-scale computations that can benefit from distributing workloads 
 Choose XT for large-scale linear algebra that exceeds GPU memory
 
 - cuBLAS vs cuBLAS-Xt
-    - `(M, N) @ (N, K)` where M = N = K = 16384
+    - `(M, N) @ (N, K)` where M = N = K = 512
     - ![](../assets/cublas_vs_cublasxt.png)
 
 Important! Compile with `nvcc -o exec code.cu -lcublas`; Note: `-lcublas` link enough for cuBLASXt. 
