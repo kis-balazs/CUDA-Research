@@ -11,7 +11,7 @@ void check(T err, const char* const func, const char* const file, const int line
     }
 }
 
-#define LEN 1000000
+#define LEN 10000000
 #define BLOCK_SIZE 256
 
 void initVector(float *a, int n) {
