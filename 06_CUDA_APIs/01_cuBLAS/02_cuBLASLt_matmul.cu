@@ -70,9 +70,9 @@ int main() {
 
 	// set up matrix & multiplication descriptors for float16
 	cublasLtMatrixLayout_t lAh, lBh, lCh;
-        cublasLtMatrixLayoutCreate(&lAh, CUDA_R_16F, M, N, M); // original NMM
-        cublasLtMatrixLayoutCreate(&lBh, CUDA_R_16F, K, M, K); // see above
-        cublasLtMatrixLayoutCreate(&lCh, CUDA_R_16F, M, N, M);
+    cublasLtMatrixLayoutCreate(&lAh, CUDA_R_16F, M, N, M); // original NMM
+    cublasLtMatrixLayoutCreate(&lBh, CUDA_R_16F, K, M, K); // see above
+    cublasLtMatrixLayoutCreate(&lCh, CUDA_R_16F, M, N, M);
 
 	cublasLtMatmulDesc_t mmDesch;
 	cublasLtMatmulDescCreate(&mmDesch, CUBLAS_COMPUTE_16F, CUDA_R_16F);

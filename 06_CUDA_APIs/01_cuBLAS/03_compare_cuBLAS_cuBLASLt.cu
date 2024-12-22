@@ -85,7 +85,7 @@ int main() {
 	cudaMalloc(&dB, sizeB);
 	cudaMalloc(&dC, sizeC);
 
-	half *dAh, *dBh, *dCh;
+	__half *dAh, *dBh, *dCh;
 	cudaMalloc(&dAh, sizeAh);
 	cudaMalloc(&dBh, sizeBh);
 	cudaMalloc(&dCh, sizeCh);
@@ -93,7 +93,7 @@ int main() {
 	cudaMemcpy(dA, A, sizeA, cudaMemcpyHostToDevice);
 	cudaMemcpy(dB, B, sizeB, cudaMemcpyHostToDevice);
 
-	half Ah[N * M], Bh[M * K];
+	__half Ah[N * M], Bh[M * K];
 	for (int i = 0; i < N * M; i++) Ah[i] = __float2half(A[i]);
 	for (int i = 0; i < M * K; i++) Bh[i] = __float2half(B[i]);
 
@@ -107,19 +107,20 @@ int main() {
 	cublasLtCreate(&handleLt);
 
 	const float alpha = 1.0f, beta = 0.0f; // comes from the generic matmul operation being constructed to mimic linear layer forward
-	const float alphah = __float2half(1.0f), betah = __float2half(0.0f);
+	const half alphah = __float2half(1.0f), betah = __float2half(0.0f);
 
 	const int runsWarmup = 3;
 	const int runsBenchmark = 20;
 
 	// -----
-       	// naive GPU matrix multiplication
+    // naive GPU matrix multiplication
 	dim3 blockDim(32, 32);
 	dim3 gridDim((K + blockDim.x - 1) / blockDim.x, (N + blockDim.y - 1) / blockDim.y);
+	
 	float naiveCUDATime = benchmarkKernel([&]() {
 		mulMatsGpu<<<gridDim, blockDim>>>(dA, dB, dC, N, M, K);
 	}, runsWarmup, runsBenchmark);
-	printf("naive matmul average time: %lf ms\n", naiveCUDATime);
+	printf("naive matmul average time: %lf ms\n\n", naiveCUDATime);
 	cudaMemcpy(C, dC, sizeC, cudaMemcpyDeviceToHost);
 
 	// -----
@@ -151,22 +152,82 @@ int main() {
 		cublasLtMatmul(handleLt, mmDesc, &alpha, dB, lB, dA, lA, &beta, dC, lC, dC, lC, NULL, NULL, 0, 0);
 	}, runsWarmup, runsBenchmark);
 	printf("cuBLASLt FP32 average time: %lf ms\n", cuBLASLtFp32Time);
-	cudaMemcpy(CcuBLASLtFp32, dC, sizeC, cudaMemcpyDeviceToHost);
+	cudaMemcpy(CcuBLASLtFp32, dC, sizeCh, cudaMemcpyDeviceToHost);
 
-	printf("\n\n");
 	bool cuBLASFp32Correct = true, cuBLASLtFp32Correct = true;
 	for (int i = 0; i < N * K; i++) {
-		if (fabs(C[i] - CcuBLASFp32[i]) > 1e-4) {
+		if (fabs(C[i] - CcuBLASFp32[i]) > 1e-5) {
 			cuBLASFp32Correct = false;
 			break;
 		}
-		if (fabs(C[i] - CcuBLASLtFp32[i]) > 1e-4) {
+		if (fabs(C[i] - CcuBLASLtFp32[i]) > 1e-5) {
 			cuBLASLtFp32Correct = false;
 			break;
 		}
 	}
 	printf("cuBLAS FP32 results are %s\n", cuBLASFp32Correct ? "correct" : "incorrect");
-	printf("cuBLAS-Lt FP32 results are %s\n", cuBLASLtFp32Correct ? "correct" : "incorrect");
+	printf("cuBLAS-Lt FP32 results are %s\n\n", cuBLASLtFp32Correct ? "correct" : "incorrect");
 
+	// -----
+	// cuBLAS FP16
+	float cuBLASFp16Time = benchmarkKernel([&]() {
+		cublasHgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, K, N, M, &alphah, dBh, K, dAh, M, &betah, dCh, K);
+	}, runsWarmup, runsBenchmark);
+	printf("cuBLAS FP16 average time: %lf ms\n", cuBLASFp16Time);
+	__half Ch[N * K];
+	cudaMemcpy(Ch, dCh, sizeCh, cudaMemcpyDeviceToHost);
+	for (int i = 0; i < N * K; i++) CcuBLASFp16[i] = __half2float(Ch[i]);
+
+	// -----
+	// cuBLASLt FP16
+	// set up matrix & multiplication descriptors for float16
+	cublasLtMatrixLayout_t lAh, lBh, lCh;
+    cublasLtMatrixLayoutCreate(&lAh, CUDA_R_16F, M, N, M); // original NMM
+    cublasLtMatrixLayoutCreate(&lBh, CUDA_R_16F, K, M, K); // see above
+    cublasLtMatrixLayoutCreate(&lCh, CUDA_R_16F, M, N, M);
+
+	cublasLtMatmulDesc_t mmDesch;
+	cublasLtMatmulDescCreate(&mmDesch, CUBLAS_COMPUTE_16F, CUDA_R_16F);
+
+	// matrix operation for A and B are already set up and used in fp32, just re-use
+	cublasLtMatmulDescSetAttribute(mmDesch, CUBLASLT_MATMUL_DESC_TRANSA, &transA, sizeof(cublasOperation_t));
+	cublasLtMatmulDescSetAttribute(mmDesch, CUBLASLT_MATMUL_DESC_TRANSB, &transB, sizeof(cublasOperation_t));
+
+	float cuBLASLtFp16Time = benchmarkKernel([&]() {
+		cublasLtMatmul(handleLt, mmDesch, &alphah, dBh, lBh, dAh, lAh, &betah, dCh, lCh, dCh, lCh, NULL, NULL, 0, 0);
+	}, runsWarmup, runsBenchmark);
+	printf("cuBLASLt FP16 average time: %lf ms\n", cuBLASLtFp16Time);
+	
+	cudaMemcpy(Ch, dCh, sizeC, cudaMemcpyDeviceToHost);
+	for (int i = 0; i < N * K; i++) CcuBLASLtFp16[i] = __half2float(Ch[i]);
+
+	bool cuBLASFp16Correct = true, cuBLASLtFp16Correct = true;
+	for (int i = 0; i < N * K; i++) {
+		if (fabs(C[i] - CcuBLASFp16[i]) > 1e-3) {
+			cuBLASFp16Correct = false;
+			break;
+		}
+		if (fabs(C[i] - CcuBLASLtFp16[i]) > 1e-3) {
+			cuBLASLtFp16Correct = false;
+			break;
+		}
+	}
+	printf("cuBLAS FP16 results are %s\n", cuBLASFp16Correct ? "correct" : "incorrect");
+	printf("cuBLAS-Lt FP16 results are %s\n\n", cuBLASLtFp16Correct ? "correct" : "incorrect");
+
+	cublasDestroy(handle);
+
+	cublasLtDestroy(handleLt);
+	cublasLtMatmulDescDestroy(mmDesc);
+	cublasLtMatrixLayoutDestroy(lA);
+	cublasLtMatrixLayoutDestroy(lB);
+	cublasLtMatrixLayoutDestroy(lC);
+	cublasLtMatmulDescDestroy(mmDesch);
+	cublasLtMatrixLayoutDestroy(lAh);
+	cublasLtMatrixLayoutDestroy(lBh);
+	cublasLtMatrixLayoutDestroy(lCh);
+
+	cudaFree(dA); cudaFree(dB); cudaFree(dC);
+	cudaFree(dAh); cudaFree(dBh); cudaFree(dCh);
 	return 0;
 }
