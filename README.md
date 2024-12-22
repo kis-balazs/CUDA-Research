@@ -9,7 +9,7 @@ Research &amp; Code for CUDA components developed/experimented by me.
 ## Related
 - [kis-balazs/CUDA-Containers-Infrastructure-Repository](https://github.com/kis-balazs/cuda-containers-infra)
 
- Important Notice
+## Important Notice - GPU-specific nvcc params
 
 When running `nvcc` commands, the `-arch` command is not always synced to the correct physical GPU. This can be fixed by specifying this.
 
