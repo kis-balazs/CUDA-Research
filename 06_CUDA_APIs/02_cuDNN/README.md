@@ -1,6 +1,8 @@
 # cuDNN
 There is virtually no need for cuFFT or a ton of manually written custom kernels to write a GPT training run + inference. Fast convolve is built into cuDNN, and cuBLAS matmul is included in cuDNN at greater abstraction. Still a good idea to review the idea of slow conv, fast conv, slow matmul, fast matmul.
 
+> Important! Compile with `nvcc -o exec code.cu -lcudnn`
+
 NVIDIA cuDNN provides highly tuned implementations of operations arising frequently in deep learning applications:
 - convolution forward and backward including cross-correlation
 - GEMM (general matrix multiply)

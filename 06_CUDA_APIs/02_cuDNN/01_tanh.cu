@@ -96,8 +96,29 @@ int main() {
     float naiveCUDATime = benchmarkKernel([&]() {
 		tanhGpuNaive<<<gridDim, blockDim>>>(dI, dONaive, tensorSize);
 	}, runsWarmup, runsBenchmark);
-	printf("naive GPU tanh() average time: %lf ms\n\n", naiveCUDATime);
+	printf("naive GPU tanh() average time: %lf ms\n", naiveCUDATime);
 	cudaMemcpy(hONaive, dONaive, sizeT, cudaMemcpyDeviceToHost);
+
+    // --- GPU cuDNN Results ---
+    cudnnHandle_t handle;
+    CHECK_CUDNN(cudnnCreate(&handle));
+
+    cudnnTensorDescriptor_t inpD;
+    CHECK_CUDNN(cudnnCreateTensorDescriptor(&inpD));
+    CHECK_CUDNN(cudnnSetTensor4dDescriptor(inpD, CUDNN_TENSOR_NCHW, CUDNN_DATA_FLOAT, N, C, H, W));
+
+    cudnnActivationDescriptor_t actD;
+    CHECK_CUDNN(cudnnCreateActivationDescriptor(&actD));
+    CHECK_CUDNN(cudnnSetActivationDescriptor(actD, CUDNN_ACTIVATION_TANH, CUDNN_PROPAGATE_NAN, 0.0));
+
+    const float alpha = 1.0, beta = 0.0;
+
+    float cuDNNCUDATime = benchmarkKernel([&]() {
+		cudnnActivationForward(handle, actD, &alpha, inpD, dI, &beta, inpD, dOCuDNN);
+	}, runsWarmup, runsBenchmark);
+	printf("cuDNN tanh() average time: %lf ms\n\n", cuDNNCUDATime);
+	cudaMemcpy(hOCuDNN, dOCuDNN, sizeT, cudaMemcpyDeviceToHost);
+
 
     bool gpuNaiveCorrect = true, gpuCuDNNCorrect = true;
 	for (int i = 0; i < tensorSize; i++) {
@@ -105,14 +126,17 @@ int main() {
 			gpuNaiveCorrect = false;
 			break;
 		}
-		// if (fabs(hOCpu[i] - hOCuDNN[i]) > 1e-5) {
-		// 	gpuCuDNNCorrect = false;
-		// 	break;
-		// }
+		if (fabs(hOCpu[i] - hOCuDNN[i]) > 1e-5) {
+			gpuCuDNNCorrect = false;
+			break;
+		}
 	}
 	printf("naive GPU tanh() results are %s\n", gpuNaiveCorrect ? "correct" : "incorrect");
-	// printf("cuDNN tanh() results are %s\n\n", gpuCuDNNCorrect ? "correct" : "incorrect");
+	printf("cuDNN tanh() results are %s\n", gpuCuDNNCorrect ? "correct" : "incorrect");
 
+    CHECK_CUDNN(cudnnDestroy(handle));
+    CHECK_CUDNN(cudnnDestroyTensorDescriptor(inpD));
+    CHECK_CUDNN(cudnnDestroyActivationDescriptor(actD));
     cudaFree(dI); cudaFree(dONaive); cudaFree(dOCuDNN);
     return 0;
 }
