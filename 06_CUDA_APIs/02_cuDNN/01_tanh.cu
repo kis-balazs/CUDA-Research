@@ -1,11 +1,11 @@
 #include <cuda_runtime.h>
 #include <cudnn.h>
 #include <stdio.h>
-#include <functional.h>
-#include <numeric.h>
+#include <functional>
+#include <numeric>
 
 #define N 256
-#define C 24
+#define C 16
 #define H 224
 #define W 224
 
@@ -14,8 +14,8 @@
 #define CHECK_CUDNN(call) { \
     cudnnStatus_t err = call; \
     if (err != CUDNN_STATUS_SUCCESS) { \
-        fprintf(stderr, "cuDNN error in file %s, line %i: %s\n", __FILE__, __LINE__, cudnnGetErrorString(err));
-        exit(EXIT_FAILURE);
+        fprintf(stderr, "cuDNN error in file %s, line %i: %s\n", __FILE__, __LINE__, cudnnGetErrorString(err)); \
+        exit(EXIT_FAILURE); \
     } \
 }
 
@@ -99,7 +99,6 @@ int main() {
 	printf("naive GPU tanh() average time: %lf ms\n\n", naiveCUDATime);
 	cudaMemcpy(hONaive, dONaive, sizeT, cudaMemcpyDeviceToHost);
 
-
     bool gpuNaiveCorrect = true, gpuCuDNNCorrect = true;
 	for (int i = 0; i < tensorSize; i++) {
 		if (fabs(hOCpu[i] - hONaive[i]) > 1e-5) {
@@ -114,5 +113,6 @@ int main() {
 	printf("naive GPU tanh() results are %s\n", gpuNaiveCorrect ? "correct" : "incorrect");
 	// printf("cuDNN tanh() results are %s\n\n", gpuCuDNNCorrect ? "correct" : "incorrect");
 
+    cudaFree(dI); cudaFree(dONaive); cudaFree(dOCuDNN);
     return 0;
 }
