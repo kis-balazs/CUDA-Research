@@ -12,7 +12,7 @@ Research &amp; Code for CUDA components developed/experimented by me.
 ## Particularly Handy Gists
 - [kis-balazs/macro__check_cuda_return.cu](https://gist.github.com/kis-balazs/03f8023320639632db46523aa6e2bc69)
   - Macro to check CUDA Error from Function Returning exit code
-- [kis-balazs/Verify Last CUDA Error](https://gist.github.com/kis-balazs/3a2590d4bf90f33b0f8776d94da25a92)
+- [kis-balazs/verif_last_cuda_error.cu](https://gist.github.com/kis-balazs/3a2590d4bf90f33b0f8776d94da25a92)
   - Verify last CUDA Error code, mainly from kernels, to use for straight-forward debugging
 
 ---
