@@ -4,4 +4,4 @@
 
 Approach is quite straightforward, relevant functions are especially interesting.
 
-![image][./images/mgpu_chunking.png]
+![][images/mgpu_chunking.png]
