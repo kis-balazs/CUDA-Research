@@ -5,3 +5,5 @@
 Approach is quite straightforward, relevant functions are especially interesting.
 
 ![](images/mgpu_chunking.png)
+
+2. TBD
