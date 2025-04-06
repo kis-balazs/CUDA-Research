@@ -30,3 +30,7 @@
         }
     }
     ```
+
+    Profile looks interlocked, bigger throughput.
+
+    ![](images/mgpu_streams__profile.png)
