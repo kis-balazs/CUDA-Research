@@ -9,8 +9,9 @@ Research &amp; Code for CUDA components developed/experimented by me.
 - [Holistic Trace Analysis](https://github.com/facebookresearch/HolisticTraceAnalysis/tree/main) - this seems like a very-very good resource for understanding PyTorch GPU traces, for end-to-end ML model evaluation
 
 ## Related
-- [kis-balazs/CUDA-Containers-Infrastructure-Repository](https://github.com/kis-balazs/cuda-containers-infra)
+- [[repo] kis-balazs/CUDA-Containers-Infrastructure-Repository](https://github.com/kis-balazs/cuda-containers-infra)
 - [relevant(+adjacent) CUDADocs.md](99_Docs/CUDADocs.md)
+- [[PDF] Multi-GPU Programming @ Supercomputing 2011](https://www.nvidia.com/docs/IO/116711/sc11-multi-gpu.pdf)
 
 ## Particularly Handy Gists
 - [kis-balazs/macro__check_cuda_return.cu](https://gist.github.com/kis-balazs/03f8023320639632db46523aa6e2bc69)
