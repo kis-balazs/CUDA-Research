@@ -10,6 +10,7 @@ Research &amp; Code for CUDA components developed/experimented by me.
 
 ## Related
 - [kis-balazs/CUDA-Containers-Infrastructure-Repository](https://github.com/kis-balazs/cuda-containers-infra)
+- [relevant(+adjacent) CUDADocs.md](99_Docs/CUDADocs.md)
 
 ## Particularly Handy Gists
 - [kis-balazs/macro__check_cuda_return.cu](https://gist.github.com/kis-balazs/03f8023320639632db46523aa6e2bc69)
