@@ -2,4 +2,4 @@
 
 # Multi-GPU chunking of data
 Approach is quite straightforward, relevant functions are especially interesting.
-![image][images/mgpu_chunking.png]
+![image][./images/mgpu_chunking.png]
