@@ -19,3 +19,14 @@
     Copy/Compute Overlap Sketch
 
     ![](images/mgpu_streams__copy_compute_overlap.png)
+
+    Synchronization for async needed!
+
+    ```cpp
+    for (int i = 0; i < numGpus; i++) {
+        cudaSetDevice(i);
+        for (int s = 0; s < numStreams; s++) {
+            cudaStreamSynchronize(streams[i][s]);
+        }
+    }
+    ```
