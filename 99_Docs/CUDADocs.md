@@ -1,6 +1,6 @@
 # Documentation for relevant(+adjacent) CUDA topics
 
-# Multi-GPU chunking of data
+1. Multi-GPU chunking of data
 
 Approach is quite straightforward, relevant functions are especially interesting.
 
