@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     }
 
     float *hA, *hB, *hC, *hC_ref;
-	float *dA, *dB, *dC, *dC_ref;
+    float *dA, *dB, *dC, *dC_ref;
 
     int sizes[5] = {64, 128, 256, 512, 1024};
     for (auto s: sizes) {
