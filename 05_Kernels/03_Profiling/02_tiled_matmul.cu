@@ -71,8 +71,8 @@ int main() {
 	cudaMemcpy(dB, B, sizeB, cudaMemcpyHostToDevice);
 
 	dim3 blockDim(TILE_SIZE, TILE_SIZE);
-    	dim3 gridDim((K + TILE_SIZE - 1) / TILE_SIZE, (N + TILE_SIZE - 1) / TILE_SIZE);
-    	mulMatsOptimized<<<gridDim, blockDim>>>(dA, dB, dC, N, M, K);
+    dim3 gridDim((K + TILE_SIZE - 1) / TILE_SIZE, (N + TILE_SIZE - 1) / TILE_SIZE);
+    mulMatsOptimized<<<gridDim, blockDim>>>(dA, dB, dC, N, M, K);
 	cudaDeviceSynchronize();
 
 	cudaMemcpy(C, dC, sizeC, cudaMemcpyDeviceToHost);
