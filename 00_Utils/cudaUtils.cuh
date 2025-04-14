@@ -2,7 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <cudnn.h>
+// TODO fix this later based on environment verification if cuDNN is installed or not
+// #include <cudnn.h>
 #include <cuda_runtime.h>
 #include <functional>
 #include <numeric>
