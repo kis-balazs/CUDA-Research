@@ -10,4 +10,6 @@ All results are executed on one **Nvidia A6000** GPU instance, locally.
 
 2. Coalesced Memory Access
 
-    `TBD`
+    `SIZE: 2048; average elapsed time: 0.00982509s; performance: 1748.57 GFLOPS`
+
+    `SIZE: 4096; average elapsed time: 0.0872624s; performance: 1575.01 GFLOPS`
