@@ -2,10 +2,9 @@
 
 #include "../00_Utils/cudaUtils.cuh"
 
-// Multiply matrices A and B
-// A(2x3) @ B(3x4) = C(2x4) --> (N x M) @ (M x K) = (N x K)
+// A(N x M) @ B(M x K) = C(N x K)
 
-__global__ void sgemm_naive(int N, int M, int K, float alpha, float *A, float *B, float beta, float *C) {
+__global__ void sgemmNaive(int N, int M, int K, float alpha, float *A, float *B, float beta, float *C) {
     uint x = blockIdx.x * blockDim.x + threadIdx.x;
     uint y = blockIdx.y * blockDim.y + threadIdx.y;
 
