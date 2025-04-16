@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
         pcdi();
         return 0;
     }
+
     auto cudaFunction = cudaFunctionMap.find(argv[1]);
     if (cudaFunction != cudaFunctionMap.end()) {
 	int sizeA, sizeB, sizeC;
@@ -72,15 +73,15 @@ int main(int argc, char **argv) {
             float alpha = 1.0f, beta = 0.0f;
             
             // TODO replace with cuBLAS implementation -> the benchmark!
-            mulMatsCpu(hA, hB, hC_ref, N, M, K);
-            //refTime = cudaFunction->second(N, M, K, alpha, dA, dB, beta, dC_ref, false);
+            // mulMatsCpu(hA, hB, hC_ref, N, M, K);
+            cudaFunctionMap["runSgemmNaive"](N, M, K, alpha, dA, dB, beta, dC_ref, false);
 
             benchmarkTime = cudaFunction->second(N, M, K, alpha, dA, dB, beta, dC, true);
             cudaDeviceSynchronize();
             cudaError_t err = cudaGetLastError();
             if (err != cudaSuccess) printf("> CUDAError: %s\n", cudaGetErrorString(err));
 
-            // cudaMemcpy(hC_ref, dC_ref, sizeC, cudaMemcpyDeviceToHost);
+            cudaMemcpy(hC_ref, dC_ref, sizeC, cudaMemcpyDeviceToHost);
             cudaMemcpy(hC, dC, sizeC, cudaMemcpyDeviceToHost);
             if (!verify_matrix(hC_ref, hC, N * K)) {
                 std::cout << "Failed to pass the correctness verification against NVIDIA cuBLAS. *(TBD)*" << std::endl;
