@@ -67,8 +67,35 @@ float runSgemmGlobalMemCoalesce(int N, int M, int K, float alpha, float *A, floa
     }
 }
 
+#include "03_SharedMemBlocking.cuh"
+float runSgemmSharedMemBlocking(int N, int M, int K, float alpha, float *A, float *B,
+		                float beta, float *C, bool benchmark) {
+    dim3 gridDim(div_ceil(N, BLOCK_SIZE), div_ceil(K, BLOCK_SIZE));
+    dim3 blockDim(BLOCK_SIZE * BLOCK_SIZE);
+
+    // L1 cache is non-used, because only SHMEM is used; so, carve out all L1 to SMEM;
+    // no diff, since occupancy is limited (register & thread count), but good practice.
+    /*cudaFuncSetAttribute(
+	sgemmSharedMemBlocking<BLOCK_SIZE>,
+	cudaFuncAttributePreferredSharedMemoryCarveout,
+	cudaSharedmemCarveoutMaxShared
+    );*/
+
+    if (benchmark)
+	return benchmarkKernel([&]() {
+	    sgemmSharedMemBlocking<BLOCK_SIZE>
+	        <<<gridDim, blockDim>>>(N, M, K, alpha, A, B, beta, C);
+	}, WARMUP_RUNS, BENCHMARK_RUNS) / 1000.0f;  // seconds
+    else {
+	sgemmSharedMemBlocking<BLOCK_SIZE>
+            <<<gridDim, blockDim>>>(N, M, K, alpha, A, B, beta, C);
+	return 1.0;
+    }
+}
+
 
 cudaFunctionMap_t cudaFunctionMap = {
     {"runSgemmNaive", runSgemmNaive},
-    {"runSgemmGlobalMemCoalesce", runSgemmGlobalMemCoalesce}
+    {"runSgemmGlobalMemCoalesce", runSgemmGlobalMemCoalesce},
+    {"runSgemmSharedMemBlocking", runSgemmSharedMemBlocking}
 };
