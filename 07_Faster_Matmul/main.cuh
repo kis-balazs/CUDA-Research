@@ -75,11 +75,11 @@ float runSgemmSharedMemBlocking(int N, int M, int K, float alpha, float *A, floa
 
     // L1 cache is non-used, because only SHMEM is used; so, carve out all L1 to SMEM;
     // no diff, since occupancy is limited (register & thread count), but good practice.
-    /*cudaFuncSetAttribute(
+    cudaFuncSetAttribute(
 	sgemmSharedMemBlocking<BLOCK_SIZE>,
 	cudaFuncAttributePreferredSharedMemoryCarveout,
 	cudaSharedmemCarveoutMaxShared
-    );*/
+    );
 
     if (benchmark)
 	return benchmarkKernel([&]() {
