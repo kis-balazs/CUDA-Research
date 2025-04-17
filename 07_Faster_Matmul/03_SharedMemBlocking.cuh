@@ -10,7 +10,7 @@ __global__ void sgemmSharedMemBlocking(int N, int M, int K, float alpha, float *
     uint x = blockIdx.x;
     uint y = blockIdx.y;
 
-    // buffer for current block in fast shared mem
+    // buffer for current block in shmem
     __shared__ float ASh[BLOCKSIZE * BLOCKSIZE];
     __shared__ float BSh[BLOCKSIZE * BLOCKSIZE];
 

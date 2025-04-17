@@ -89,7 +89,30 @@ float runSgemmSharedMemBlocking(int N, int M, int K, float alpha, float *A, floa
     else {
 	sgemmSharedMemBlocking<BLOCK_SIZE>
             <<<gridDim, blockDim>>>(N, M, K, alpha, A, B, beta, C);
-	return 1.0;
+	return -1.0;
+    }
+}
+
+#include "04_1DBlocktiling.cuh"
+float runSgemm1DBlocktiling(int N, int M, int K, float alpha, float *A, float *B,
+		            float beta, float *C, bool benchmark) {
+    const uint BN = 64;
+    const uint BK = 64;
+    const uint BM = 8;
+    const uint TN = 8;
+
+    dim3 gridDim(div_ceil(K, BK), div_ceil(N, BN));
+    dim3 blockDim((BN * BK) / TN);
+
+    if (benchmark)
+	return benchmarkKernel([&]() {
+	    sgemm1DBLocktiling<BN, BK, BM, TN>
+	        <<<gridDim, blockDim>>>(N, M, K, alpha, A, B, beta, C);
+	}, WARMUP_RUNS, BENCHMARK_RUNS) / 1000.0f;  // seconds
+    else {
+	sgemm1DBLocktiling<BN, BK, BM, TN>
+	    <<<gridDim, blockDim>>>(N, M, K, alpha, A, B, beta, C);
+	return -1.0;
     }
 }
 
@@ -97,5 +120,6 @@ float runSgemmSharedMemBlocking(int N, int M, int K, float alpha, float *A, floa
 cudaFunctionMap_t cudaFunctionMap = {
     {"runSgemmNaive", runSgemmNaive},
     {"runSgemmGlobalMemCoalesce", runSgemmGlobalMemCoalesce},
-    {"runSgemmSharedMemBlocking", runSgemmSharedMemBlocking}
+    {"runSgemmSharedMemBlocking", runSgemmSharedMemBlocking},
+    {"runSgemm1DBlocktiling", runSgemm1DBlocktiling}
 };
