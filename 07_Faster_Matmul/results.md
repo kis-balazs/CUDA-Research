@@ -19,3 +19,10 @@ All results are executed on one **Nvidia A6000** GPU instance, *natively*.
     `SIZE: 2048; average elapsed time: 0.00578487s; performance: 2969.79 GFLOPS`
 
     `SIZE: 4096; average elapsed time: 0.0456818s; performance: 3008.61 GFLOPS`
+
+4. 1D Blocktiling
+
+    `SIZE: 2048; average elapsed time: 0.00208048s; performance: 8257.66 GFLOPS`
+
+    `SIZE: 4096; average elapsed time: 0.0162718s; performance: 8446.47 GFLOPS`
+
