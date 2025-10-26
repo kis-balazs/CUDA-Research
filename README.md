@@ -31,7 +31,9 @@ Research &amp; Code for CUDA components developed/experimented by me.
 When running `nvcc` commands, the `-arch` command is not always synced to the correct physical GPU. This can be fixed by specifying this.
 
 Steps:
-- find compute version: find the GPU compute version [here](https://developer.nvidia.com/cuda-gpus)
-- specify when compiling: `nvcc -o exec code.cu -arch=compute_XX`
-- optionally, `code` can be specified as well: `-code=sm_XX,compute_XX`
+- find compute version:
+   - find the GPU compute version [here](https://developer.nvidia.com/cuda-gpus)
+   - `nvidia-smi --query-gpu=compute_cap`, will return **compute_cap X.Y**
+- specify when compiling: `nvcc -o exec code.cu -arch=compute_XY`
+- optionally, `code` can be specified as well: `-code=sm_XX,compute_XY`
 
