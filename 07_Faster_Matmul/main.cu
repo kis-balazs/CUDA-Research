@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
             cudaMemcpy(dA, hA, sizeA, cudaMemcpyHostToDevice);
             cudaMemcpy(dB, hB, sizeB, cudaMemcpyHostToDevice);
 
-	    // -----
+	        // -----
             float benchmarkTime;
             float alpha = 1.0f, beta = 0.0f;
             
