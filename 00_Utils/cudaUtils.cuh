@@ -7,6 +7,7 @@
 #include <cuda_runtime.h>
 #include <functional>
 #include <numeric>
+#include <cassert>
 
 #define CHECK_CUDA(call) { \
     cudaError_t err = call; \
