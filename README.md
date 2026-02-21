@@ -1,6 +1,9 @@
 # CUDA-Research
 Research &amp; Code for CUDA components developed/experimented by me.
 
+[DeepWiki Link](https://deepwiki.com/kis-balazs/CUDA-Research)
+> Really Cool AI-based synthesis page generated from the repo source, documentation, etc.
+
 ## Resources Outline
 - [cuda-course](https://github.com/Infatoshi/cuda-course)
 - [cuda-mnist](https://github.com/Infatoshi/cuda-course)
